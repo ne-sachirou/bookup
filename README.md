@@ -8,6 +8,6 @@ FIXME
 
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2017 ne_Sachirou
 
-Distributed under the Eclipse Public License, the same as Clojure.
+GPL-3.0

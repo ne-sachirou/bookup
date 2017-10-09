@@ -1,7 +1,7 @@
 (defproject bookup/bookup "0.1.0-SNAPSHOT"
   :description "FIXME: Android project description"
   :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
+  :license {:name "GPL-3.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :global-vars {clojure.core/*warn-on-reflection* true}
