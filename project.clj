@@ -49,13 +49,17 @@
                          :proguard-conf-path "build/proguard-minify.cfg"}}]}
 
   :android {;; Specify the path to the Android SDK directory.
-            ;; :sdk-path "/home/user/path/to/android-sdk/"
+            :sdk-path "/usr/local/share/android-sdk/"
 
             ;; Increase this value if dexer fails with OutOfMemoryException.
             :dex-opts ["-JXmx4096M" "--incremental"]
 
-            :target-version "18"
+            :target-version "26"
             :aot-exclude-ns ["clojure.parallel" "clojure.core.reducers"
                              "cider.nrepl" "cider-nrepl.plugin"
                              "cider.nrepl.middleware.util.java.parser"
-                             #"cljs-tooling\..+"]})
+                             #"cljs-tooling\..+"]}
+
+  :android-user {:dependencies [[cider/cider-nrepl "0.15.1"]]
+                 :android {:aot-exclude-ns ["cider.nrepl.middleware.util.java.parser"
+                                            "cider.nrepl" "cider-nrepl.plugin"]}})
