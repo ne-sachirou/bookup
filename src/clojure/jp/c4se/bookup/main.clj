@@ -5,22 +5,15 @@
             [neko.resource :as res]
             [neko.find-view :refer [find-view]]
             [neko.threading :refer [on-ui]])
-  (:import android.widget.EditText))
+  (:import (com.google.zxing.integration.android IntentIntegrator IntentResult)))
 
 ;; We execute this function to import all subclasses of R class. This gives us
 ;; access to all application resources.
 (res/import-all)
 
-(defn notify-from-edit
-  "Finds an EditText element with ID ::user-input in the given activity. Gets
-  its contents and displays them in a toast if they aren't empty. We use
-  resources declared in res/values/strings.xml."
+(defn scan-bar-code
   [activity]
-  (let [^EditText input (.getText (find-view activity ::user-input))]
-    (toast (if (empty? input)
-             (res/get-string R$string/input_is_empty)
-             (res/get-string R$string/your_input_fmt input))
-           :long)))
+  (.initiateScan (IntentIntegrator. activity)))
 
 ;; This is how an Activity is defined. We create one and specify its onCreate
 ;; method. Inside we create a user interface that consists of an edit and a
@@ -38,9 +31,13 @@
      [:linear-layout {:orientation :vertical
                       :layout-width :fill
                       :layout-height :wrap}
-      [:edit-text {:id ::user-input
-                   :hint "Type text here"
-                   :layout-width :fill}]
-      [:button {:text R$string/touch_me ;; We use resource here, but could
-                                           ;; have used a plain string too.
-                :on-click (fn [_] (notify-from-edit (*a)))}]]))))
+      [:button {:text R$string/scan_bar_code
+                :on-click (fn [_] (scan-bar-code (*a)))}]])))
+
+  (onActivityResult
+   [this request-code result-code intent]
+   (.superOnActivityResult this request-code result-code intent)
+   (let [scan-result (IntentIntegrator/parseActivityResult request-code result-code intent)]
+     (if (nil? scan-result)
+       nil
+       (toast (.getContents scan-result) :long)))))

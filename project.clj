@@ -13,7 +13,10 @@
             [lein-droid "0.4.6"]]
 
   :dependencies [[org.clojure-android/clojure "1.7.0-r4"]
-                 [neko/neko "4.0.0-alpha5"]]
+                 [neko/neko "4.0.0-alpha5"]
+                 [com.google.zxing/android-core "3.3.0"]
+                 [com.google.zxing/android-integration "3.3.0"]
+                 [com.google.zxing/core "3.3.0"]]
   :profiles {:default [:dev]
 
              :dev
