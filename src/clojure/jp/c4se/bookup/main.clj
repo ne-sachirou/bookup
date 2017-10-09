@@ -1,11 +1,11 @@
 (ns jp.c4se.bookup.main
-    (:require [neko.activity :refer [defactivity set-content-view!]]
-              [neko.debug :refer [*a]]
-              [neko.notify :refer [toast]]
-              [neko.resource :as res]
-              [neko.find-view :refer [find-view]]
-              [neko.threading :refer [on-ui]])
-    (:import android.widget.EditText))
+  (:require [neko.activity :refer [defactivity set-content-view!]]
+            [neko.debug :refer [*a]]
+            [neko.notify :refer [toast]]
+            [neko.resource :as res]
+            [neko.find-view :refer [find-view]]
+            [neko.threading :refer [on-ui]])
+  (:import android.widget.EditText))
 
 ;; We execute this function to import all subclasses of R class. This gives us
 ;; access to all application resources.
@@ -28,17 +28,19 @@
 (defactivity jp.c4se.bookup.BarCodeReaderActivity
   :key :main
 
-  (onCreate [this bundle]
-    (.superOnCreate this bundle)
-    (neko.debug/keep-screen-on this)
-    (on-ui
-      (set-content-view! (*a)
-        [:linear-layout {:orientation :vertical
-                         :layout-width :fill
-                         :layout-height :wrap}
-         [:edit-text {:id ::user-input
-                      :hint "Type text here"
-                      :layout-width :fill}]
-         [:button {:text R$string/touch_me ;; We use resource here, but could
+  (onCreate
+   [this bundle]
+   (.superOnCreate this bundle)
+   (neko.debug/keep-screen-on this)
+   (on-ui
+    (set-content-view!
+     (*a)
+     [:linear-layout {:orientation :vertical
+                      :layout-width :fill
+                      :layout-height :wrap}
+      [:edit-text {:id ::user-input
+                   :hint "Type text here"
+                   :layout-width :fill}]
+      [:button {:text R$string/touch_me ;; We use resource here, but could
                                            ;; have used a plain string too.
-                   :on-click (fn [_] (notify-from-edit (*a)))}]]))))
+                :on-click (fn [_] (notify-from-edit (*a)))}]]))))
