@@ -12,11 +12,12 @@
   :plugins [[lein-cljfmt "0.5.7"]
             [lein-droid "0.4.6"]]
 
-  :dependencies [[org.clojure-android/clojure "1.7.0-r4"]
+  :dependencies [[com.google.zxing/android-integration "3.3.0"]
+                 [funcool/cats "2.1.0"]
                  [neko/neko "4.0.0-alpha5"]
-                 [com.google.zxing/android-core "3.3.0"]
-                 [com.google.zxing/android-integration "3.3.0"]
-                 [com.google.zxing/core "3.3.0"]]
+                 [org.clojure/data.json "0.2.6"]
+                 [org.clojure-android/clojure "1.7.0-r4"]]
+
   :profiles {:default [:dev]
 
              :dev
@@ -24,6 +25,7 @@
               {:dependencies [[org.clojure/tools.nrepl "0.2.10"]]
                :target-path "target/debug"
                :android {:aot :all-with-unused
+                         :aot-exclude-ns [#"^cats.labs\..+"]
                          :manifest-options {:app-name "BookUp (debug)"}
                          ;; Uncomment to be able install debug and release side-by-side.
                          ;; :rename-manifest-package "jp.c4se.bookup.debug"
@@ -58,7 +60,7 @@
             ;; Increase this value if dexer fails with OutOfMemoryException.
             :dex-opts ["-JXmx4096M" "--incremental"]
 
-            :target-version "26"
+            :target-version "24"
             :aot-exclude-ns ["clojure.parallel" "clojure.core.reducers"
                              "cider.nrepl" "cider-nrepl.plugin"
                              "cider.nrepl.middleware.util.java.parser"

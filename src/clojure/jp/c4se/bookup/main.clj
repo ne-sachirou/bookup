@@ -1,23 +1,28 @@
 (ns jp.c4se.bookup.main
-  (:require [neko.activity :refer [defactivity set-content-view!]]
+  (:require [jp.c4se.bookup.book :as book]
+            [cats.core :as m]
+            [cats.monad.either :as either]
+            [neko.activity :refer [defactivity set-content-view!]]
             [neko.debug :refer [*a]]
             [neko.notify :refer [toast]]
             [neko.resource :as res]
             [neko.find-view :refer [find-view]]
             [neko.threading :refer [on-ui]])
-  (:import (com.google.zxing.integration.android IntentIntegrator IntentResult)))
+  (:import com.google.zxing.integration.android.IntentIntegrator))
 
-;; We execute this function to import all subclasses of R class. This gives us
-;; access to all application resources.
 (res/import-all)
 
 (defn scan-bar-code
   [activity]
   (.initiateScan (IntentIntegrator. activity)))
 
-;; This is how an Activity is defined. We create one and specify its onCreate
-;; method. Inside we create a user interface that consists of an edit and a
-;; button. We also give set callback to the button.
+(defn parse-bar-code-scan-result
+  [request-code result-code intent]
+  (let [scan-result (IntentIntegrator/parseActivityResult request-code result-code intent)]
+    (if (nil? scan-result)
+      (either/left "No bar-code")
+      (either/right (.getContents scan-result)))))
+
 (defactivity jp.c4se.bookup.BarCodeReaderActivity
   :key :main
 
@@ -37,7 +42,9 @@
   (onActivityResult
    [this request-code result-code intent]
    (.superOnActivityResult this request-code result-code intent)
-   (let [scan-result (IntentIntegrator/parseActivityResult request-code result-code intent)]
-     (if (nil? scan-result)
-       nil
-       (toast (.getContents scan-result) :long)))))
+   (either/branch
+    (m/alet [isbn (parse-bar-code-scan-result request-code result-code intent)
+             book (book/find-by-isbn isbn)]
+            book)
+    (fn [error] (toast error :long))
+    (fn [[:book {title :title}]] (toast title :long)))))

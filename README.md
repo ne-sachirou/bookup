@@ -8,8 +8,11 @@ List up my books.
 
 Usage
 --
-
-FIXME
+```sh
+git clone git@github.com:ne-sachirou/bookup.git
+cd bookup
+lein droid doall
+```
 
 License
 --
