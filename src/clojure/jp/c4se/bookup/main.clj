@@ -1,19 +1,21 @@
 (ns jp.c4se.bookup.main
-  (:require [jp.c4se.bookup.book :as book]
-            [cats.core :as m]
+  (:require [cats.core :as m]
             [cats.monad.either :as either]
+            [jp.c4se.bookup.book.openbd :as book.openbd]
+            [jp.c4se.bookup.book.sqlite :as book.sqlite]
             [neko.activity :refer [defactivity set-content-view!]]
             [neko.debug :refer [*a]]
             [neko.notify :refer [toast]]
             [neko.resource :as res]
             [neko.find-view :refer [find-view]]
             [neko.threading :refer [on-ui]])
-  (:import com.google.zxing.integration.android.IntentIntegrator))
+  (:import android.app.Activity
+           com.google.zxing.integration.android.IntentIntegrator))
 
 (res/import-all)
 
 (defn scan-bar-code
-  [activity]
+  [^Activity activity]
   (.initiateScan (IntentIntegrator. activity)))
 
 (defn parse-bar-code-scan-result
@@ -44,7 +46,9 @@
    (.superOnActivityResult this request-code result-code intent)
    (either/branch
     (m/alet [isbn (parse-bar-code-scan-result request-code result-code intent)
-             book (book/find-by-isbn isbn)]
+             book @(future (book.openbd/find-by-isbn isbn))
+             (book.sqlite/find-by-isbn (:isbn book))
+             ]
             book)
     (fn [error] (toast error :long))
-    (fn [[:book {title :title}]] (toast title :long)))))
+    (fn [book] (toast (:title book) :long)))))

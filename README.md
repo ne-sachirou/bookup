@@ -14,6 +14,13 @@ cd bookup
 lein droid doall
 ```
 
+Lint & Test
+--
+```sh
+lein cljfmt fix
+lein ancient check
+```
+
 License
 --
 Copyright © 2017 ne_Sachirou
